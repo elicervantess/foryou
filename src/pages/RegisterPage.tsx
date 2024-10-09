@@ -23,24 +23,14 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-800 via-black to-gray-900 text-gray-200">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-800 via-black to-gray-900 text-gray-200">
       <div className="bg-gray-900 bg-opacity-75 p-8 rounded-lg shadow-2xl w-full max-w-md text-center transition-transform transform hover:scale-105">
-        <h1 className="text-3xl font-bold text-yellow-500 mb-6">
-          Create an Account
-        </h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-gray-400 text-left">Name</label>
-            <input
-              type="text"
-              className="w-full p-3 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400 transition duration-300 text-gray-300"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-gray-400 text-left">Email</label>
+        <h2 className="text-3xl font-bold mb-6 text-center text-yellow-500">
+          Register
+        </h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-gray-400">Email</label>
             <input
               type="email"
               className="w-full p-3 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400 transition duration-300 text-gray-300"
@@ -49,8 +39,18 @@ const RegisterPage: React.FC = () => {
               required
             />
           </div>
-          <div>
-            <label className="block text-gray-400 text-left">Password</label>
+          <div className="mb-4">
+            <label className="block text-gray-400">Name</label>
+            <input
+              type="text"
+              className="w-full p-3 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400 transition duration-300 text-gray-300"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-400">Password</label>
             <input
               type="password"
               className="w-full p-3 bg-gray-800 bg-opacity-50 border border-gray-700 rounded-lg focus:outline-none focus:border-yellow-500 focus:ring-2 focus:ring-yellow-400 transition duration-300 text-gray-300"
@@ -59,14 +59,16 @@ const RegisterPage: React.FC = () => {
               required
             />
           </div>
-          <div className="flex items-center text-gray-400">
+          <div className="mb-4">
+            <label className="block text-gray-400">
+              Do you have a place to publish?
+            </label>
             <input
               type="checkbox"
-              className="mr-2 form-checkbox bg-gray-700 border-gray-600 rounded text-yellow-500 focus:ring-0"
+              className="mt-1"
               checked={hasPlace}
               onChange={(e) => setHasPlace(e.target.checked)}
             />
-            <label>Do you have a place to publish?</label>
           </div>
           <button
             type="submit"
@@ -78,12 +80,6 @@ const RegisterPage: React.FC = () => {
         <div className="mt-4">
           <GoogleAuth />
         </div>
-        <p className="text-center text-gray-400 mt-4">
-          Already have an account?{" "}
-          <a href="/login" className="text-yellow-500 hover:underline">
-            Login here
-          </a>
-        </p>
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ const LoginPage: React.FC = () => {
     try {
       const response = await login(email, password);
       console.log("Login successful:", response);
-      navigate("/home");
+      navigate("/home", { state: { message: "Ingreso correctamente" } });
     } catch (error) {
       console.error("Login failed:", error);
     }
@@ -25,8 +25,8 @@ const LoginPage: React.FC = () => {
         <h1 className="text-3xl font-bold text-yellow-500 mb-6">
           Login With ExploreConnect
         </h1>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
             <label className="block text-gray-400 text-left">Email</label>
             <input
               type="email"
@@ -36,7 +36,7 @@ const LoginPage: React.FC = () => {
               required
             />
           </div>
-          <div className="mb-4">
+          <div>
             <label className="block text-gray-400 text-left">Password</label>
             <input
               type="password"
