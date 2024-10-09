@@ -35,7 +35,8 @@ const GoogleAuth: React.FC = () => {
           console.log("Token inválido");
         }
       } else {
-        console.log("Error al validar con el backend");
+        const errorData = await res.json();
+        console.log("Error al validar con el backend:", errorData);
       }
     } catch (error) {
       console.error("Error en la solicitud al backend:", error);
@@ -43,7 +44,11 @@ const GoogleAuth: React.FC = () => {
   };
 
   const onFailure = (response: any) => {
-    console.log("Algo salió mal al iniciar sesión con Google:", response);
+    if (response.error === "popup_closed_by_user") {
+      console.log("El usuario cerró el popup de inicio de sesión.");
+    } else {
+      console.log("Algo salió mal al iniciar sesión con Google:", response);
+    }
   };
 
   const handleLogout = () => {
