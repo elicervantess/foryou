@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .focus\:border-gradient-dark {
+    border-image: linear-gradient(to right, #6a0dad, #8a2be2, #00ced1) 1;
+  }
+}
