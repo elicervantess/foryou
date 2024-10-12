@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { motion, useIsPresent } from "framer-motion";
 import {
+  FiUser,
   FiMail,
   FiLock,
   FiEye,
   FiEyeOff,
-  FiUser,
   FiMapPin,
   FiCompass,
   FiGlobe,
@@ -15,19 +15,43 @@ import { register } from "../api";
 import GoogleAuth from "../components/GoogleAuth";
 import Logo from "../assets/Logo.png";
 import FlipWords from "../components/FlipWords";
+import AnimatedBackground from "../components/AnimatedBackground";
 
 const RegisterPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [hasPlace, setHasPlace] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const isPresent = useIsPresent();
+  const location = useLocation();
+
+  const resetForm = useCallback(() => {
+    setEmail("");
+    setName("");
+    setPassword("");
+    setConfirmPassword("");
+    setHasPlace(false);
+    setError("");
+  }, []);
+
+  useEffect(() => {
+    resetForm();
+  }, [location, resetForm]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (password !== confirmPassword) {
+      setError("Las contraseñas no coinciden");
+      return;
+    }
+
     try {
       const response = await register(email, name, password, hasPlace);
       console.log("Register successful:", response);
@@ -39,13 +63,15 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 via-blue-200 to-blue-300 text-gray-800">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-col md:flex-row w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl"
-      >
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: isPresent ? 1 : 0 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      className="flex items-center justify-center min-h-screen relative bg-gradient-to-br from-blue-100 to-blue-200"
+    >
+      <AnimatedBackground />
+      <div className="flex flex-col md:flex-row w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl relative z-10">
         <div className="w-full md:w-1/2 p-6 bg-white bg-opacity-90 backdrop-blur-md">
           <h1 className="text-3xl font-bold mb-4 text-center text-blue-600">
             Registro
@@ -89,6 +115,24 @@ const RegisterPage: React.FC = () => {
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <FiEyeOff /> : <FiEye />}
+              </button>
+            </div>
+            <div className="relative">
+              <FiLock className="absolute top-3 left-3 text-gray-400" />
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirmar Contraseña"
+                className="w-full p-2 pl-10 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
               </button>
             </div>
             <label className="flex items-center space-x-2 text-sm">
@@ -197,8 +241,8 @@ const RegisterPage: React.FC = () => {
             Descubre. Conecta. Crea.
           </motion.div>
         </div>
-      </motion.div>
-    </div>
+      </div>
+    </motion.div>
   );
 };
 
