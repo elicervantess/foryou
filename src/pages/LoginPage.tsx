@@ -51,24 +51,24 @@ const LoginPage: React.FC = () => {
       animate={{ opacity: isPresent ? 1 : 0 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
-      className="flex items-center justify-center min-h-screen relative"
+      className="flex items-center justify-center min-h-screen relative bg-[#75BDE0]"
     >
       <AnimatedBackground />
-      <div className="flex flex-col md:flex-row w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl relative z-10 bg-white bg-opacity-90">
-        <div className="w-full md:w-1/2 p-8 bg-white bg-opacity-90 backdrop-blur-md">
-          <h1 className="text-4xl font-bold mb-6 text-center text-blue-600">
+      <div className="flex flex-col md:flex-row w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl relative z-10">
+        <div className="w-full md:w-1/2 p-8 bg-white">
+          <h1 className="text-4xl font-bold mb-6 text-center text-[#2C7695]">
             Bienvenido
           </h1>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-gray-700 font-semibold mb-2">
+              <label className="block text-[#2C7695] font-semibold mb-2">
                 Email
               </label>
               <div className="relative">
-                <FiMail className="absolute top-3 left-3 text-gray-400" />
+                <FiMail className="absolute top-1/2 left-3 transform -translate-y-1/2 text-[#2C7695]" />
                 <input
                   type="email"
-                  className="w-full p-3 pl-10 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                  className="w-full p-3 pl-10 border border-[#2C7695] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#75BDE0] transition duration-300 bg-white text-[#2C7695]"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -76,21 +76,21 @@ const LoginPage: React.FC = () => {
               </div>
             </div>
             <div>
-              <label className="block text-gray-700 font-semibold mb-2">
+              <label className="block text-[#2C7695] font-semibold mb-2">
                 Contraseña
               </label>
               <div className="relative">
-                <FiLock className="absolute top-3 left-3 text-gray-400" />
+                <FiLock className="absolute top-1/2 left-3 transform -translate-y-1/2 text-[#2C7695]" />
                 <input
                   type={showPassword ? "text" : "password"}
-                  className="w-full p-3 pl-10 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+                  className="w-full p-3 pl-10 border border-[#2C7695] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#75BDE0] transition duration-300 bg-white text-[#2C7695]"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
                 <button
                   type="button"
-                  className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-[#2C7695] hover:text-[#75BDE0]"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <FiEyeOff /> : <FiEye />}
@@ -100,7 +100,7 @@ const LoginPage: React.FC = () => {
             {error && <p className="text-red-500 text-center">{error}</p>}
             <button
               type="submit"
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-xl shadow-md hover:from-blue-600 hover:to-blue-700 transition duration-300"
+              className="w-full py-3 bg-[#2C7695] text-white font-semibold rounded-xl shadow-md hover:bg-[#75BDE0] transition duration-300"
             >
               Iniciar sesión
             </button>
@@ -108,29 +108,32 @@ const LoginPage: React.FC = () => {
           <div className="mt-6">
             <GoogleAuth />
           </div>
-          <p className="text-center text-gray-600 mt-6">
+          <p className="text-center text-[#2C7695] mt-6">
             ¿No tienes una cuenta?{" "}
-            <a href="/register" className="text-blue-500 hover:underline">
+            <a
+              href="/register"
+              className="text-[#75BDE0] hover:underline font-semibold"
+            >
               Regístrate aquí
             </a>
           </p>
         </div>
-        <div className="w-full md:w-1/2 flex flex-col items-center justify-center bg-gradient-to-br from-indigo-600 to-blue-700 p-8 text-white relative overflow-hidden">
+        <div className="w-full md:w-1/2 flex flex-col items-center justify-center bg-gradient-to-br from-[#75BDE0] to-[#78D1D2] p-8 text-white relative overflow-hidden">
           <div className="relative z-10 mb-8">
             <img src={Logo} alt="Logo" className="h-32 w-32 object-contain" />
           </div>
           <div className="text-center relative z-10">
-            <h2 className="text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-200">
+            <h2 className="text-5xl font-bold mb-4 text-white">
               ExploreConnect
             </h2>
-            <p className="text-xl font-semibold mb-2 text-blue-100">
+            <p className="text-xl font-semibold mb-2 text-white">
               Crea sitios web
             </p>
-            <div className="text-3xl font-bold text-yellow-300">
+            <div className="text-3xl font-bold text-[#214D72]">
               <FlipWords words={["hermosos", "responsivos", "modernos"]} />
             </div>
           </div>
-          <div className="absolute bottom-4 right-4 text-blue-200 text-sm">
+          <div className="absolute bottom-4 right-4 text-[#214D72] text-sm font-semibold">
             Descubre. Conecta. Crea.
           </div>
         </div>

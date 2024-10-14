@@ -1,74 +1,66 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { FiHome, FiLogIn, FiUserPlus } from "react-icons/fi";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiHome, FiLogIn, FiUserPlus, FiMenu, FiX } from "react-icons/fi";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeItem, setActiveItem] = useState("/");
+  const location = useLocation();
+
+  useEffect(() => {
+    setActiveItem(location.pathname);
+  }, [location]);
+
+  const navItems = [
+    { to: "/home", icon: <FiHome />, text: "Inicio" },
+    { to: "/login", icon: <FiLogIn />, text: "Iniciar sesión" },
+    { to: "/register", icon: <FiUserPlus />, text: "Registro" },
+  ];
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ type: "spring", stiffness: 120 }}
-      className="fixed top-0 left-0 w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg z-10"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <Link
-            to="/home"
-            className="text-2xl font-bold tracking-wider hover:text-yellow-300 transition duration-300"
-          >
-            ExploreConnect
+    <nav className="fixed top-0 left-0 w-full z-50 px-6 py-4">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center justify-between">
+          <Link to="/home" className="flex items-center space-x-2">
+            <img
+              src="/path-to-your-logo.png"
+              alt="Logo"
+              className="h-10 w-10"
+            />
+            <span className="text-2xl font-bold text-[#214D72]">
+              ExploreConnect
+            </span>
           </Link>
-          <div className="hidden md:flex space-x-8">
-            <NavLink to="/home" icon={<FiHome />} text="Home" />
-            <NavLink to="/login" icon={<FiLogIn />} text="Login" />
-            <NavLink to="/register" icon={<FiUserPlus />} text="Register" />
+          <div className="hidden md:flex items-center space-x-1">
+            {navItems.map((item) => (
+              <NavLink
+                key={item.to}
+                {...item}
+                active={activeItem === item.to}
+              />
+            ))}
           </div>
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-white hover:text-yellow-300 focus:outline-none"
+              className="text-[#214D72] hover:text-[#75BDE0] transition-colors duration-300"
             >
-              <svg className="h-6 w-6 fill-current" viewBox="0 0 24 24">
-                {isOpen ? (
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M18.278 16.864a1 1 0 0 1-1.414 1.414l-4.829-4.828-4.828 4.828a1 1 0 0 1-1.414-1.414l4.828-4.829-4.828-4.828a1 1 0 0 1 1.414-1.414l4.829 4.828 4.828-4.828a1 1 0 1 1 1.414 1.414l-4.828 4.829 4.828 4.828z"
-                  />
-                ) : (
-                  <path
-                    fillRule="evenodd"
-                    d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2z"
-                  />
-                )}
-              </svg>
+              {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
           </div>
         </div>
       </div>
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.3 }}
-          className="md:hidden"
-        >
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <MobileNavLink to="/home" icon={<FiHome />} text="Home" />
-            <MobileNavLink to="/login" icon={<FiLogIn />} text="Login" />
-            <MobileNavLink
-              to="/register"
-              icon={<FiUserPlus />}
-              text="Register"
-            />
-          </div>
-        </motion.div>
-      )}
-    </motion.nav>
+      <AnimatePresence>
+        {isOpen && (
+          <MobileMenu
+            navItems={navItems}
+            activeItem={activeItem}
+            setIsOpen={setIsOpen}
+          />
+        )}
+      </AnimatePresence>
+    </nav>
   );
 };
 
@@ -76,32 +68,65 @@ const NavLink: React.FC<{
   to: string;
   icon: React.ReactNode;
   text: string;
-}> = ({ to, icon, text }) => (
-  <Link
-    to={to}
-    className="flex items-center space-x-2 text-white hover:text-yellow-300 transition duration-300"
-  >
-    <motion.div
-      whileHover={{ scale: 1.2, rotate: 360 }}
-      transition={{ type: "spring", stiffness: 260, damping: 20 }}
-    >
-      {icon}
-    </motion.div>
-    <span>{text}</span>
+  active: boolean;
+}> = ({ to, icon, text, active }) => (
+  <Link to={to} className="relative group px-3 py-2">
+    <div className="flex items-center space-x-1 text-[#214D72] group-hover:text-[#75BDE0] transition-colors duration-300">
+      <span className="text-xl">{icon}</span>
+      <span className="font-medium">{text}</span>
+    </div>
+    {active && (
+      <motion.div
+        className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#75BDE0]"
+        layoutId="underline"
+      />
+    )}
   </Link>
+);
+
+const MobileMenu: React.FC<{
+  navItems: { to: string; icon: React.ReactNode; text: string }[];
+  activeItem: string;
+  setIsOpen: (isOpen: boolean) => void;
+}> = ({ navItems, activeItem, setIsOpen }) => (
+  <motion.div
+    initial={{ opacity: 0, y: -20 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -20 }}
+    transition={{ duration: 0.3 }}
+    className="absolute top-full left-0 w-full bg-white shadow-lg rounded-b-lg overflow-hidden"
+  >
+    <div className="px-4 py-2 space-y-1">
+      {navItems.map((item) => (
+        <MobileNavLink
+          key={item.to}
+          {...item}
+          active={activeItem === item.to}
+          setIsOpen={setIsOpen}
+        />
+      ))}
+    </div>
+  </motion.div>
 );
 
 const MobileNavLink: React.FC<{
   to: string;
   icon: React.ReactNode;
   text: string;
-}> = ({ to, icon, text }) => (
+  active: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+}> = ({ to, icon, text, active, setIsOpen }) => (
   <Link
     to={to}
-    className="flex items-center space-x-2 text-white hover:bg-indigo-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+    className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-300 ${
+      active
+        ? "bg-[#75BDE0] text-white"
+        : "text-[#214D72] hover:bg-[#75BDE0] hover:text-white"
+    }`}
+    onClick={() => setIsOpen(false)}
   >
-    {icon}
-    <span>{text}</span>
+    <span className="text-xl">{icon}</span>
+    <span className="font-medium">{text}</span>
   </Link>
 );
 
