@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiHome, FiLogIn, FiUserPlus, FiMenu, FiX } from "react-icons/fi";
+import logoIsotipo from "../assets/logo_isotipo.png";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -23,11 +24,7 @@ const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between">
           <Link to="/home" className="flex items-center space-x-2">
-            <img
-              src="/path-to-your-logo.png"
-              alt="Logo"
-              className="h-10 w-10"
-            />
+            <img src={logoIsotipo} alt="Logo Isotipo" className="h-10 w-10" />
             <span className="text-2xl font-bold text-[#214D72]">
               ExploreConnect
             </span>

@@ -1,7 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion, useIsPresent } from "framer-motion";
-import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
+import {
+  FiMail,
+  FiLock,
+  FiEye,
+  FiEyeOff,
+  FiMapPin,
+  FiCompass,
+  FiGlobe,
+} from "react-icons/fi";
 import { login } from "../api";
 import GoogleAuth from "../components/GoogleAuth";
 import Logo from "../assets/Logo.png";
@@ -68,7 +76,7 @@ const LoginPage: React.FC = () => {
                 <FiMail className="absolute top-1/2 left-3 transform -translate-y-1/2 text-[#2C7695]" />
                 <input
                   type="email"
-                  className="w-full p-3 pl-10 border border-[#2C7695] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#75BDE0] transition duration-300 bg-white text-[#2C7695]"
+                  className="w-full p-3 pl-10 border border-[#2C7695] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#75BDE0] transition duration-300 bg-white text-black"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -83,7 +91,7 @@ const LoginPage: React.FC = () => {
                 <FiLock className="absolute top-1/2 left-3 transform -translate-y-1/2 text-[#2C7695]" />
                 <input
                   type={showPassword ? "text" : "password"}
-                  className="w-full p-3 pl-10 border border-[#2C7695] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#75BDE0] transition duration-300 bg-white text-[#2C7695]"
+                  className="w-full p-3 pl-10 border border-[#2C7695] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#75BDE0] transition duration-300 bg-white text-black"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -119,23 +127,79 @@ const LoginPage: React.FC = () => {
           </p>
         </div>
         <div className="w-full md:w-1/2 flex flex-col items-center justify-center bg-gradient-to-br from-[#75BDE0] to-[#78D1D2] p-8 text-white relative overflow-hidden">
-          <div className="relative z-10 mb-8">
+          <motion.div className="absolute top-0 left-0 w-full h-full">
+            <motion.div
+              animate={{
+                x: [0, 10, 0],
+                y: [0, 5, 0],
+                transition: {
+                  repeat: Infinity,
+                  duration: 2,
+                  ease: "easeInOut",
+                },
+              }}
+            >
+              <FiMapPin className="absolute top-8 left-8 text-4xl text-[#214D72] opacity-50" />
+            </motion.div>
+            <motion.div
+              animate={{
+                x: [0, -10, 0],
+                y: [0, -5, 0],
+                transition: {
+                  repeat: Infinity,
+                  duration: 2,
+                  ease: "easeInOut",
+                  delay: 0.3,
+                },
+              }}
+            >
+              <FiCompass className="absolute bottom-8 right-8 text-4xl text-[#214D72] opacity-50" />
+            </motion.div>
+            <motion.div
+              animate={{
+                x: [0, 5, 0],
+                y: [0, -10, 0],
+                transition: {
+                  repeat: Infinity,
+                  duration: 2,
+                  ease: "easeInOut",
+                  delay: 0.6,
+                },
+              }}
+            >
+              <FiGlobe className="absolute top-1/2 right-8 text-4xl text-[#214D72] opacity-50" />
+            </motion.div>
+          </motion.div>
+
+          <motion.div className="relative z-10 mb-8">
             <img src={Logo} alt="Logo" className="h-32 w-32 object-contain" />
-          </div>
-          <div className="text-center relative z-10">
-            <h2 className="text-5xl font-bold mb-4 text-white">
+          </motion.div>
+
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.5, type: "spring" }}
+            className="text-center relative z-10"
+          >
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 text-white">
               ExploreConnect
             </h2>
             <p className="text-xl font-semibold mb-2 text-white">
-              Crea sitios web
+              Únete a nuestra comunidad
             </p>
-            <div className="text-3xl font-bold text-[#214D72]">
-              <FlipWords words={["hermosos", "responsivos", "modernos"]} />
+            <div className="text-2xl sm:text-3xl font-bold text-[#214D72]">
+              <FlipWords words={["explora", "conecta", "comparte"]} />
             </div>
-          </div>
-          <div className="absolute bottom-4 right-4 text-[#214D72] text-sm font-semibold">
+          </motion.div>
+
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="absolute bottom-4 right-4 text-[#214D72] text-sm font-semibold"
+          >
             Descubre. Conecta. Crea.
-          </div>
+          </motion.div>
         </div>
       </div>
     </motion.div>
