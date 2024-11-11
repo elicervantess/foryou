@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import { FaHeart, FaGift, FaBirthdayCake } from "react-icons/fa";
 
-// Define el componente de la carta de cumpleaños
 const BirthdayCard = () => (
   <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-200 to-purple-300">
     <motion.div

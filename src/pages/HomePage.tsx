@@ -1,32 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { getAllPlacesForMap } from "../api";
+import { getAllPlacesForMap, ApiPlaceResponse } from "../api";
 import MapComponent from "../components/MapComponent";
 import PlaceCard from "../components/PlaceCard";
 import SearchBar from "../components/SearchBar";
-import { PlaceResponse } from "../types/PlaceResponse";
 
 const HomePage: React.FC = () => {
-  const [places, setPlaces] = useState<PlaceResponse[]>([]);
-  const [filteredPlaces, setFilteredPlaces] = useState<PlaceResponse[]>([]);
+  const [places, setPlaces] = useState<ApiPlaceResponse[]>([]);
+  const [filteredPlaces, setFilteredPlaces] = useState<ApiPlaceResponse[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [highlightedPlace, setHighlightedPlace] =
-    useState<PlaceResponse | null>(null);
+    useState<ApiPlaceResponse | null>(null);
   const itemsPerPage = 4;
 
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
         const data = await getAllPlacesForMap();
-        const transformedData = data.map((apiPlace) => ({
-          ...apiPlace,
-          address: "", // Proporciona un valor predeterminado
-          description: "", // Proporciona un valor predeterminado
-          likes: 0, // Proporciona un valor predeterminado
-          reviews: [], // Proporciona un valor predeterminado
-          promotions: [], // Proporciona un valor predeterminado
-        }));
-        setPlaces(transformedData);
-        setFilteredPlaces(transformedData);
+        setPlaces(data);
+        setFilteredPlaces(data);
       } catch (error) {
         console.error("Error al obtener lugares:", error);
       }
@@ -34,22 +25,18 @@ const HomePage: React.FC = () => {
     fetchPlaces();
   }, []);
 
-  const handleSearch = async (query: string, category: string) => {
-    try {
-      let filtered = places;
-      if (query) {
-        filtered = places.filter((place) =>
-          place.name.toLowerCase().includes(query.toLowerCase())
-        );
-      }
-      if (category) {
-        filtered = filtered.filter((place) => place.category === category);
-      }
-      setFilteredPlaces(filtered);
-      setCurrentPage(0);
-    } catch (error) {
-      console.error("Error en la búsqueda:", error);
+  const handleSearch = (query: string, category: string) => {
+    let filtered = places;
+    if (query) {
+      filtered = places.filter((place) =>
+        place.name.toLowerCase().includes(query.toLowerCase())
+      );
     }
+    if (category) {
+      filtered = filtered.filter((place) => place.category === category);
+    }
+    setFilteredPlaces(filtered);
+    setCurrentPage(0);
   };
 
   const handleNextPage = () => {
@@ -110,6 +97,15 @@ const HomePage: React.FC = () => {
         <div className="w-full lg:w-1/2 p-2">
           <MapComponent
             places={highlightedPlace ? [highlightedPlace] : paginatedPlaces}
+            center={
+              highlightedPlace
+                ? highlightedPlace.coordinate
+                : paginatedPlaces[0]?.coordinate || {
+                    latitude: 0,
+                    longitude: 0,
+                  }
+            }
+            containerStyle={{ width: "100%", height: "400px" }}
           />
         </div>
       </div>
