@@ -11,7 +11,7 @@ import {
   FiCompass,
   FiGlobe,
 } from "react-icons/fi";
-import { register } from "../api";
+import { register, login } from "../api"; // Asegúrate de importar la función de login
 import GoogleAuth from "../components/GoogleAuth";
 import Logo from "../assets/Logo.png";
 import FlipWords from "../components/FlipWords";
@@ -53,9 +53,15 @@ const RegisterPage: React.FC = () => {
     }
 
     try {
-      const response = await register(email, name, password, hasPlace);
-      console.log("Register successful:", response);
+      await register(email, name, password, hasPlace);
+      console.log("Register successful");
+
+      // Iniciar sesión automáticamente después del registro
+      const loginResponse = await login(email, password);
+      localStorage.setItem("authToken", loginResponse.token);
+
       navigate("/home");
+      window.location.reload(); // Refresca la página
     } catch (error) {
       console.error("Register failed:", error);
       setError("Error en el registro. Por favor, intente nuevamente.");

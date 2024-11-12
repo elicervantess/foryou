@@ -32,11 +32,6 @@ const LoginPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const cleanup = () => {};
-    return cleanup;
-  }, []);
-
-  useEffect(() => {
     resetForm();
   }, [location, resetForm]);
 
@@ -45,8 +40,10 @@ const LoginPage: React.FC = () => {
     setError("");
     try {
       const response = await login(email, password);
+      localStorage.setItem("authToken", response.token);
       console.log("Login successful:", response);
-      navigate("/home", { state: { message: "Ingreso correctamente" } });
+      navigate("/home");
+      window.location.reload(); // Refresca la página
     } catch (error) {
       console.error("Login failed:", error);
       setError("Contraseña o correo incorrecto");

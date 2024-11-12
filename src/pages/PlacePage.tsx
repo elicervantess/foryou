@@ -1,35 +1,71 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getPlaceById } from "../api";
+import { getPlaceById, toggleLike } from "../api";
 import { ApiPlaceResponse } from "../api";
 import PlaceDetails from "../components/PlaceDetails";
 import PromotionsList from "../components/PromotionsList";
 import MapComponent from "../components/MapComponent";
-import { FaHeart } from "react-icons/fa";
+import { useAuth } from "../AuthContext";
+import Rating from "../components/Rating";
+import ReviewsModal from "../components/ReviewsModal";
+import LikeButton from "../components/LikeButton";
+import Modal from "../components/Modal";
 
 const PlacePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [place, setPlace] = useState<ApiPlaceResponse | null>(null);
   const [likes, setLikes] = useState<number>(0);
+  const [hasLiked, setHasLiked] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [showAlert, setShowAlert] = useState<boolean>(false);
+  const { token } = useAuth();
 
   useEffect(() => {
     const fetchPlace = async () => {
       try {
         if (id) {
           const data = await getPlaceById(id);
+          console.log("Datos del lugar:", data);
           setPlace(data);
           setLikes(data.likes ?? 0);
+
+          // Usa el token como parte de la clave para almacenar el estado de like
+          const storedHasLiked = localStorage.getItem(
+            `hasLiked-${id}-${token}`
+          );
+          setHasLiked(
+            (storedHasLiked === "true" || data.userHasLiked) ?? false
+          );
         }
       } catch (error) {
         console.error("Error al obtener los detalles del lugar:", error);
       }
     };
     fetchPlace();
-  }, [id]);
+  }, [id, token]);
 
-  const handleLike = () => {
-    setLikes(likes + 1);
-    // Aquí podrías hacer una llamada a la API para actualizar los likes en el servidor
+  const handleLikeToggle = async () => {
+    if (!token) {
+      setShowAlert(true);
+      return;
+    }
+
+    if (id) {
+      try {
+        const updatedPlace = await toggleLike(id, token);
+        console.log("Like toggle realizado");
+        setLikes(updatedPlace.likes ?? 0);
+        setHasLiked(updatedPlace.userHasLiked ?? false);
+
+        // Guarda el estado de hasLiked en localStorage usando el ID del lugar y el token
+        localStorage.setItem(
+          `hasLiked-${id}-${token}`,
+          String(updatedPlace.userHasLiked)
+        );
+      } catch (error) {
+        console.error("Error al cambiar el estado de like:", error);
+      }
+    }
   };
 
   if (!place) {
@@ -73,18 +109,14 @@ const PlacePage: React.FC = () => {
               Reserva
             </button>
             <p className="mt-4 flex items-center">
-              <button onClick={handleLike} className="mr-2">
-                <FaHeart className="text-red-500" />
-              </button>
-              A {likes} personas les gusta este lugar
+              <LikeButton hasLiked={hasLiked} onToggle={handleLikeToggle} />A{" "}
+              {likes} personas les gusta este lugar
             </p>
-            <p>
-              <strong>Promedio de Reseñas:</strong> {averageRating.toFixed(1)}{" "}
-              ⭐
-            </p>
-            <p>
-              <strong>Total de Reseñas:</strong> {place.reviews.length}
-            </p>
+            <Rating
+              averageRating={averageRating}
+              totalReviews={place.reviews.length}
+              onClick={() => setIsModalOpen(true)}
+            />
           </div>
         </div>
       </div>
@@ -97,7 +129,7 @@ const PlacePage: React.FC = () => {
               coordinate: place.coordinate,
             },
           ]}
-          center={place.coordinate} // Centrar el mapa en las coordenadas del lugar
+          center={place.coordinate}
           containerStyle={{ width: "100%", height: "300px" }}
         />
       </div>
@@ -110,6 +142,17 @@ const PlacePage: React.FC = () => {
           }))}
         />
       </div>
+      <ReviewsModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        reviews={place.reviews}
+      />
+      <Modal
+        isOpen={showAlert}
+        onClose={() => setShowAlert(false)}
+        title="Atención"
+        message="Debes iniciar sesión o registrarte para dar like."
+      />
     </div>
   );
 };

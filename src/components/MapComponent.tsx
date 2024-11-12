@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { GoogleMap, Marker } from "@react-google-maps/api";
 
 interface MapComponentProps {
   places: Array<{
@@ -9,7 +9,7 @@ interface MapComponentProps {
       latitude: number;
       longitude: number;
     };
-    isHighlighted?: boolean; // Añadimos esta propiedad opcional
+    isHighlighted?: boolean;
   }>;
   center: {
     latitude: number;
@@ -27,32 +27,30 @@ const MapComponent: React.FC<MapComponentProps> = ({
   containerStyle,
 }) => {
   return (
-    <LoadScript googleMapsApiKey="AIzaSyDTW5hhttoJGo7usEohzDPfub_KR6KFTRU">
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={{ lat: center.latitude, lng: center.longitude }}
-        zoom={15}
-      >
-        {places.map((place) => (
-          <Marker
-            key={place.id}
-            position={{
-              lat: place.coordinate.latitude,
-              lng: place.coordinate.longitude,
-            }}
-            title={place.name}
-            icon={
-              place.isHighlighted
-                ? {
-                    url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-                    scaledSize: new window.google.maps.Size(40, 40),
-                  }
-                : undefined
-            }
-          />
-        ))}
-      </GoogleMap>
-    </LoadScript>
+    <GoogleMap
+      mapContainerStyle={containerStyle}
+      center={{ lat: center.latitude, lng: center.longitude }}
+      zoom={15}
+    >
+      {places.map((place) => (
+        <Marker
+          key={place.id}
+          position={{
+            lat: place.coordinate.latitude,
+            lng: place.coordinate.longitude,
+          }}
+          title={place.name}
+          icon={
+            place.isHighlighted
+              ? {
+                  url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
+                  scaledSize: new window.google.maps.Size(40, 40),
+                }
+              : undefined
+          }
+        />
+      ))}
+    </GoogleMap>
   );
 };
 

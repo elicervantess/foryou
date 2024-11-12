@@ -6,17 +6,17 @@ const PlaceDetails: React.FC<{
   category: string;
   openingHours: string;
 }> = ({ description, address, category, openingHours }) => (
-  <div className="bg-white p-4 rounded-lg shadow-md">
-    <p>
+  <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200 rounded-xl">
+    <p className="text-lg font-semibold text-gray-800">
       <strong>Descripción:</strong> {description}
     </p>
-    <p>
+    <p className="text-lg font-semibold text-gray-800">
       <strong>Dirección:</strong> {address}
     </p>
-    <p>
+    <p className="text-lg font-semibold text-gray-800">
       <strong>Categoría:</strong> {category}
     </p>
-    <p>
+    <p className="text-lg font-semibold text-gray-800">
       <strong>Horario de Apertura:</strong> {openingHours}
     </p>
   </div>

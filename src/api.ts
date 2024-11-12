@@ -45,6 +45,7 @@ export interface ApiPlaceResponse {
   };
   reviews: Review[];
   promotions: Promotion[];
+  userHasLiked?: boolean;
 }
 
 interface RegisterResponse {
@@ -146,6 +147,33 @@ export const getNearbyPlaces = async (latitude: number, longitude: number): Prom
     return response.data;
   } catch (error: any) {
     console.error("Error al obtener lugares cercanos:", error);
+    throw error;
+  }
+};
+
+export async function toggleLike(id: string, token: string): Promise<ApiPlaceResponse> {
+  try {
+    const response = await axios.post<ApiPlaceResponse>(`${API_URL}/places/${id}/like`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error(`Error al alternar like para el lugar con ID ${id}:`, error);
+    throw error;
+  }
+}
+
+export const logout = async (token: string): Promise<void> => {
+  try {
+    await axios.post(`${API_URL}/auth/logout`, {}, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error: any) {
+    console.error("Error al cerrar sesión:", error);
     throw error;
   }
 };
