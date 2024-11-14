@@ -20,13 +20,11 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   };
 
   return (
-    <div className="flex items-center justify-center mt-4 mb-8">
-      <div className="flex items-center bg-white rounded-full shadow-md p-4 w-full max-w-xl border border-[#78D1D2]">
-        {" "}
-        {/* Cambiar max-w-3xl a max-w-xl */}
+    <div className="flex items-center justify-center mt-12 mb-8">
+      <div className="flex items-center bg-white rounded-full shadow-md p-4 w-full max-w-lg border border-[#78D1D2]">
         <input
           type="text"
-          placeholder="¿Dónde?"
+          placeholder="Busca lugares o actividades"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyPress={handleKeyPress}
@@ -38,9 +36,11 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           className="border-l border-gray-300 px-4 py-2 text-gray-700 focus:outline-none"
         >
           <option value="">Categoría</option>
+          <option value="CAFETERIA">Cafetería</option>
           <option value="RESTAURANT">Restaurante</option>
-          <option value="CAFE">Café</option>
-          <option value="BAR">Bar</option>
+          <option value="CULTURAL">Cultural</option>
+          <option value="RECREATIONAL">Recreacional</option>
+          <option value="EVENT">Evento</option>
         </select>
         <button
           onClick={handleSearch}

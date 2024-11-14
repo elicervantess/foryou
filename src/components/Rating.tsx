@@ -14,14 +14,29 @@ const Rating: React.FC<RatingProps> = ({
 }) => {
   return (
     <div
-      className="flex items-center cursor-pointer p-4 bg-white shadow-md rounded-lg hover:shadow-lg transition-shadow border border-gray-200"
+      className="flex items-center justify-center p-2 bg-white shadow-sm rounded-md"
       onClick={onClick}
     >
-      <span className="text-3xl font-bold text-gray-800">
-        {averageRating.toFixed(1)}
-      </span>
-      <FaStar className="text-yellow-500 ml-2 text-2xl" />
-      <span className="ml-4 text-lg text-gray-600">{totalReviews} Reseñas</span>
+      <div className="flex flex-col items-center mr-2">
+        <span className="text-lg font-bold text-gray-900">
+          {averageRating.toFixed(2)}
+        </span>
+        <div className="flex">
+          {[...Array(5)].map((_, i) => (
+            <FaStar
+              key={i}
+              className={`text-lg ${
+                i < Math.round(averageRating) ? "text-black" : "text-gray-300"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+      <div className="border-l border-gray-300 h-8 mx-2"></div>
+      <div className="flex flex-col items-center ml-2">
+        <span className="text-lg font-bold text-gray-900">{totalReviews}</span>
+        <span className="text-sm text-black underline">Reseñas</span>
+      </div>
     </div>
   );
 };

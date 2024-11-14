@@ -12,7 +12,10 @@ import { AuthProvider } from "./AuthContext";
 const App: React.FC = () => {
   return (
     <AuthProvider>
-      <LoadScript googleMapsApiKey="AIzaSyDTW5hhttoJGo7usEohzDPfub_KR6KFTRU">
+      <LoadScript
+        googleMapsApiKey="AIzaSyDTW5hhttoJGo7usEohzDPfub_KR6KFTRU"
+        libraries={["places", "marker"]}
+      >
         <Router>
           <NavBar />
           <Routes>

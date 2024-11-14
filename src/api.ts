@@ -2,7 +2,6 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:8080';
 
-// Interfaces para los tipos de datos de respuesta
 interface LoginResponse {
   token: string;
   user: {
@@ -177,3 +176,17 @@ export const logout = async (token: string): Promise<void> => {
     throw error;
   }
 };
+
+export async function getPromotionsByPlace(placeId: string, token: string): Promise<Promotion[]> {
+  try {
+    const response = await axios.get<Promotion[]>(`${API_URL}/promotions/place/${placeId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error(`Error al obtener promociones para el lugar con ID ${placeId}:`, error);
+    throw error;
+  }
+}

@@ -1,5 +1,4 @@
-import React, { memo } from "react";
-import { GoogleMap, Marker } from "@react-google-maps/api";
+import React, { memo, useEffect, useRef } from "react";
 
 interface MapComponentProps {
   places: Array<{
@@ -19,39 +18,45 @@ interface MapComponentProps {
     width: string;
     height: string;
   };
+  mapId: string;
 }
 
 const MapComponent: React.FC<MapComponentProps> = ({
   places,
   center,
   containerStyle,
+  mapId,
 }) => {
-  return (
-    <GoogleMap
-      mapContainerStyle={containerStyle}
-      center={{ lat: center.latitude, lng: center.longitude }}
-      zoom={15}
-    >
-      {places.map((place) => (
-        <Marker
-          key={place.id}
-          position={{
-            lat: place.coordinate.latitude,
-            lng: place.coordinate.longitude,
-          }}
-          title={place.name}
-          icon={
-            place.isHighlighted
-              ? {
-                  url: "http://maps.google.com/mapfiles/ms/icons/red-dot.png",
-                  scaledSize: new window.google.maps.Size(40, 40),
-                }
-              : undefined
-          }
-        />
-      ))}
-    </GoogleMap>
-  );
+  const mapRef = useRef<HTMLDivElement | null>(null);
+
+  const styledContainer = {
+    ...containerStyle,
+    borderRadius: "15px",
+    border: "2px solid #214D72",
+  };
+
+  useEffect(() => {
+    if (mapRef.current) {
+      const map = new google.maps.Map(mapRef.current, {
+        center: { lat: center.latitude, lng: center.longitude },
+        zoom: 15,
+        mapId: mapId,
+      });
+
+      places.forEach((place) => {
+        new google.maps.Marker({
+          position: new google.maps.LatLng(
+            place.coordinate.latitude,
+            place.coordinate.longitude
+          ),
+          map: map,
+          title: place.name,
+        });
+      });
+    }
+  }, [places, center, mapId]);
+
+  return <div ref={mapRef} style={styledContainer} />;
 };
 
 export default memo(MapComponent);

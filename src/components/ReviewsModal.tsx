@@ -26,8 +26,8 @@ const ReviewsModal: React.FC<ReviewsModalProps> = ({
   }));
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-8 rounded-2xl max-w-3xl w-full shadow-lg border border-gray-300">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center transition-opacity duration-300 ease-in-out">
+      <div className="bg-white p-8 rounded-2xl max-w-3xl w-full shadow-lg border border-gray-300 transform transition-transform duration-300 ease-in-out scale-95">
         <button
           onClick={onClose}
           className="text-red-500 float-right font-bold hover:text-red-700 transition-colors"

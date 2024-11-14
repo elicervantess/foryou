@@ -3,6 +3,8 @@ import { getAllPlacesForMap, ApiPlaceResponse } from "../api";
 import MapComponent from "../components/MapComponent";
 import PlaceCard from "../components/PlaceCard";
 import SearchBar from "../components/SearchBar";
+import AnimatedBackground from "../components/AnimatedBackground";
+import Pagination from "../components/Pagination";
 
 const HomePage: React.FC = () => {
   const [places, setPlaces] = useState<ApiPlaceResponse[]>([]);
@@ -10,7 +12,7 @@ const HomePage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [highlightedPlace, setHighlightedPlace] =
     useState<ApiPlaceResponse | null>(null);
-  const itemsPerPage = 4;
+  const itemsPerPage = 9;
 
   useEffect(() => {
     const fetchPlaces = async () => {
@@ -56,45 +58,61 @@ const HomePage: React.FC = () => {
     (currentPage + 1) * itemsPerPage
   );
 
+  const totalPages = Math.ceil(filteredPlaces.length / itemsPerPage);
+
   return (
-    <div className="container mx-auto p-8">
-      <SearchBar onSearch={handleSearch} />
-      <div className="flex flex-wrap mt-6">
-        <div className="w-full lg:w-1/2 p-2">
-          <div className="flex flex-wrap justify-center">
-            {paginatedPlaces.map((place) => (
-              <PlaceCard
-                key={place.id}
-                place={place}
-                onMouseEnter={() => setHighlightedPlace(place)}
-              />
-            ))}
+    <div className="container mx-auto p-0 relative overflow-hidden">
+      <AnimatedBackground />
+      <div className="sticky top-0 z-10">
+        <SearchBar onSearch={handleSearch} />
+      </div>
+      <div className="flex mt-4 relative z-20">
+        <div
+          className="w-full lg:w-2/3 p-2"
+          style={{
+            maxHeight: "calc(100vh - 150px)",
+            overflowY: "auto",
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
+          }}
+        >
+          <div className="grid grid-cols-3 gap-y-0 gap-x-4">
+            {paginatedPlaces.map((place) => {
+              const averageRating =
+                place.reviews.length > 0
+                  ? place.reviews.reduce(
+                      (sum, review) => sum + review.rating,
+                      0
+                    ) / place.reviews.length
+                  : 0;
+
+              return (
+                <PlaceCard
+                  key={place.id}
+                  place={{ ...place, rating: averageRating }}
+                  onMouseEnter={() => setHighlightedPlace(place)}
+                />
+              );
+            })}
           </div>
-          <div className="flex justify-center items-center mt-4 space-x-4">
-            {currentPage > 0 && (
-              <button
-                onClick={handlePrevPage}
-                className="bg-blue-600 text-white rounded-full px-4 py-2"
-              >
-                Anterior
-              </button>
-            )}
-            <span className="text-gray-700 font-semibold">
-              Página {currentPage + 1} de{" "}
-              {Math.ceil(filteredPlaces.length / itemsPerPage)}
-            </span>
-            <button
-              onClick={handleNextPage}
-              className="bg-blue-600 text-white rounded-full px-4 py-2"
-              disabled={
-                (currentPage + 1) * itemsPerPage >= filteredPlaces.length
-              }
-            >
-              Siguiente
-            </button>
-          </div>
+          {totalPages > 1 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onNext={handleNextPage}
+              onPrev={handlePrevPage}
+            />
+          )}
         </div>
-        <div className="w-full lg:w-1/2 p-2">
+        <div
+          className="w-full lg:w-1/3 p-2 sticky top-0"
+          style={{ height: "500px", marginTop: "-40px" }}
+        >
+          <h2 className="text-3xl font-semibold text-gray-800 mb-4">
+            <span className="bg-gradient-to-r from-blue-500 to-teal-500 bg-clip-text text-transparent">
+              Ubicación en el mapa:
+            </span>
+          </h2>
           <MapComponent
             places={highlightedPlace ? [highlightedPlace] : paginatedPlaces}
             center={
@@ -105,7 +123,8 @@ const HomePage: React.FC = () => {
                     longitude: 0,
                   }
             }
-            containerStyle={{ width: "100%", height: "400px" }}
+            containerStyle={{ width: "100%", height: "100%" }}
+            mapId="44ee8e50b046cd6f"
           />
         </div>
       </div>
