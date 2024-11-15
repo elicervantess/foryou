@@ -149,7 +149,7 @@ const RegisterPage: React.FC = () => {
                 onChange={(e) => setHasPlace(e.target.checked)}
               />
               <span className="text-[#2C7695]">
-                ¿Tienes un lugar para rentar?
+                ¿Tienes un lugar para publicar?
               </span>
             </label>
             {error && (

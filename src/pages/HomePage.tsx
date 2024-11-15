@@ -3,8 +3,8 @@ import { getAllPlacesForMap, ApiPlaceResponse } from "../api";
 import MapComponent from "../components/MapComponent";
 import PlaceCard from "../components/PlaceCard";
 import SearchBar from "../components/SearchBar";
-import AnimatedBackground from "../components/AnimatedBackground";
 import Pagination from "../components/Pagination";
+import AnimatedBackground from "../components/AnimatedBackground";
 
 const HomePage: React.FC = () => {
   const [places, setPlaces] = useState<ApiPlaceResponse[]>([]);
@@ -59,6 +59,16 @@ const HomePage: React.FC = () => {
   );
 
   const totalPages = Math.ceil(filteredPlaces.length / itemsPerPage);
+
+  useEffect(() => {
+    // Forzar redimensionamiento del mapa al cambiar de página
+    if (window.google && window.google.maps) {
+      const mapElement = document.querySelector(".map-container");
+      if (mapElement) {
+        window.google.maps.event.trigger(mapElement, "resize");
+      }
+    }
+  }, [currentPage]);
 
   return (
     <div className="container mx-auto p-0 relative overflow-hidden">

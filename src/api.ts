@@ -47,10 +47,6 @@ export interface ApiPlaceResponse {
   userHasLiked?: boolean;
 }
 
-interface RegisterResponse {
-  message: string;
-}
-
 interface GoogleLoginResponse {
   valid: boolean;
   user?: {
@@ -60,10 +56,19 @@ interface GoogleLoginResponse {
   };
 }
 
+export interface NewReviewDto {
+  comment: string;
+  rating: number;
+  placeId: number;
+}
+
 // Función para iniciar sesión
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
   try {
     const response = await axios.post<LoginResponse>(`${API_URL}/auth/login`, { email, password });
+    const { token, user } = response.data;
+    localStorage.setItem("authToken", token);
+    localStorage.setItem("authUser", JSON.stringify(user));
     return response.data;
   } catch (error: any) {
     console.error("Error al iniciar sesión:", error);
@@ -77,15 +82,18 @@ export const register = async (
   name: string,
   password: string,
   hasPlace: boolean
-): Promise<RegisterResponse> => {
+): Promise<LoginResponse> => {
   try {
     const role = hasPlace ? 'OWNER' : 'USER';
-    const response = await axios.post<RegisterResponse>(`${API_URL}/auth/signin`, {
+    const response = await axios.post<LoginResponse>(`${API_URL}/auth/signin`, {
       email,
       name,
       password,
       role,
     });
+    const { token, user } = response.data;
+    localStorage.setItem("authToken", token);
+    localStorage.setItem("authUser", JSON.stringify(user));
     return response.data;
   } catch (error: any) {
     console.error("Error al registrarse:", error);
@@ -187,6 +195,56 @@ export async function getPromotionsByPlace(placeId: string, token: string): Prom
     return response.data;
   } catch (error: any) {
     console.error(`Error al obtener promociones para el lugar con ID ${placeId}:`, error);
+    throw error;
+  }
+}
+
+// Interfaz para la solicitud de reserva
+export interface ReservationRequest {
+  placeId: number;
+  date: string;
+  numberOfPeople: number;
+}
+
+// Interfaz para la respuesta de reserva
+export interface ReservationResponse {
+  id: number;
+  placeId: number;
+  date: string;
+  numberOfPeople: number;
+  userEmail: string;
+}
+
+export async function createReservation(
+  reservationRequest: ReservationRequest,
+  token: string
+): Promise<ReservationResponse> {
+  try {
+    const response = await axios.post<ReservationResponse>(
+      `${API_URL}/reservations`,
+      reservationRequest,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Error al crear la reserva:", error);
+    throw error;
+  }
+}
+
+export async function createReview(newReview: NewReviewDto, token: string): Promise<void> {
+  try {
+    await axios.post(`${API_URL}/review/new`, newReview, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error: any) {
+    console.error("Error al crear la reseña:", error);
     throw error;
   }
 }

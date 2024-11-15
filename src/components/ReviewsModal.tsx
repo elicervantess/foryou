@@ -1,28 +1,68 @@
-import React from "react";
-import { Review } from "../api";
+import React, { useState } from "react";
 import { FaStar } from "react-icons/fa";
+import { createReview, NewReviewDto } from "../api";
+
+interface Review {
+  id: number;
+  comment: string;
+  rating: number;
+  placeId: number;
+}
 
 interface ReviewsModalProps {
   isOpen: boolean;
   onClose: () => void;
   reviews: Review[];
+  placeId: number;
 }
 
 const ReviewsModal: React.FC<ReviewsModalProps> = ({
   isOpen,
   onClose,
   reviews,
+  placeId,
 }) => {
   if (!isOpen) return null;
 
+  const [newComment, setNewComment] = useState("");
+  const [newRating, setNewRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [currentReviews, setCurrentReviews] = useState<Review[]>(reviews);
+
+  const handleCreateReview = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.error("Usuario no autenticado");
+      return;
+    }
+
+    const newReview: NewReviewDto = {
+      comment: newComment,
+      rating: newRating,
+      placeId,
+    };
+
+    try {
+      await createReview(newReview, token);
+      console.log("Reseña creada");
+      // Actualiza las reseñas localmente
+      setCurrentReviews([...currentReviews, { ...newReview, id: Date.now() }]);
+      setNewComment("");
+      setNewRating(0);
+    } catch (error) {
+      console.error("Error al crear la reseña:", error);
+    }
+  };
+
   const averageRating =
-    reviews.length > 0
-      ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
+    currentReviews.length > 0
+      ? currentReviews.reduce((acc, review) => acc + review.rating, 0) /
+        currentReviews.length
       : 0;
 
   const ratingDistribution = [5, 4, 3, 2, 1].map((rating) => ({
     rating,
-    count: reviews.filter((review) => review.rating === rating).length,
+    count: currentReviews.filter((review) => review.rating === rating).length,
   }));
 
   return (
@@ -57,12 +97,46 @@ const ReviewsModal: React.FC<ReviewsModalProps> = ({
                   <div className="flex-1 mx-2 bg-gray-200 rounded-full h-2">
                     <div
                       className="bg-yellow-500 h-2 rounded-full"
-                      style={{ width: `${(count / reviews.length) * 100}%` }}
+                      style={{
+                        width: `${(count / currentReviews.length) * 100}%`,
+                      }}
                     ></div>
                   </div>
                   <span className="text-gray-600">{count}</span>
                 </div>
               ))}
+            </div>
+            <div className="mt-6">
+              <h3 className="text-xl font-semibold mb-4 text-gray-700">
+                Crear Reseña
+              </h3>
+              <div className="flex items-center mb-4">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <FaStar
+                    key={star}
+                    className={`text-3xl cursor-pointer transition-transform transform hover:scale-125 ${
+                      (hoverRating || newRating) >= star
+                        ? "text-yellow-500"
+                        : "text-gray-300"
+                    }`}
+                    onClick={() => setNewRating(star)}
+                    onMouseEnter={() => setHoverRating(star)}
+                    onMouseLeave={() => setHoverRating(0)}
+                  />
+                ))}
+              </div>
+              <textarea
+                className="w-full p-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+                placeholder="Escribe tu reseña aquí..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+              />
+              <button
+                onClick={handleCreateReview}
+                className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-2 rounded-lg shadow-md hover:from-blue-600 hover:to-indigo-600 transition-colors transform hover:scale-105"
+              >
+                Enviar Reseña
+              </button>
             </div>
           </div>
           <div className="flex-1 pl-6 overflow-y-auto max-h-[60vh]">
@@ -70,11 +144,8 @@ const ReviewsModal: React.FC<ReviewsModalProps> = ({
               Reseñas
             </h3>
             <ul className="space-y-4">
-              {reviews.map((review) => (
-                <li
-                  key={review.id}
-                  className="border-b pb-2 rounded-lg shadow-sm"
-                >
+              {currentReviews.map((review, index) => (
+                <li key={index} className="border-b pb-2 rounded-lg shadow-sm">
                   <p className="font-bold text-gray-700 flex items-center">
                     {review.rating} <FaStar className="text-yellow-500 ml-1" />
                   </p>

@@ -12,15 +12,18 @@ import LikeButton from "../components/LikeButton";
 import Modal from "../components/Modal";
 import PlaceHeader from "../components/PlaceHeader";
 import { motion } from "framer-motion";
+import ReservationModal from "../components/ReservationModal";
 
 const PlacePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [place, setPlace] = useState<ApiPlaceResponse | null>(null);
   const [likes, setLikes] = useState<number>(0);
   const [hasLiked, setHasLiked] = useState<boolean>(false);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isReviewsModalOpen, setIsReviewsModalOpen] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const { token } = useAuth();
+  const [isReservationModalOpen, setIsReservationModalOpen] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const fetchPlace = async () => {
@@ -66,6 +69,29 @@ const PlacePage: React.FC = () => {
     }
   };
 
+  const handleReservationClick = () => {
+    if (!token) {
+      setShowAlert(true);
+    } else {
+      setIsReservationModalOpen(true);
+    }
+  };
+
+  const handleReviewsClick = () => {
+    setIsReviewsModalOpen(true);
+  };
+
+  const fetchPlaceData = async () => {
+    const updatedPlace = await getPlaceById(id ?? "");
+    setPlace(updatedPlace);
+  };
+
+  useEffect(() => {
+    if (!isReviewsModalOpen) {
+      fetchPlaceData();
+    }
+  }, [isReviewsModalOpen]);
+
   if (!place) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -98,7 +124,10 @@ const PlacePage: React.FC = () => {
               openingHours={place.openingHours}
             />
             <div className="mt-6">
-              <button className="bg-gradient-to-r from-green-400 to-blue-500 text-white px-8 py-3 rounded-full shadow-lg hover:opacity-90 transition-opacity duration-300">
+              <button
+                onClick={handleReservationClick}
+                className="bg-gradient-to-r from-green-400 to-blue-500 text-white px-8 py-3 rounded-full shadow-lg hover:opacity-90 transition-opacity duration-300"
+              >
                 Reserva
               </button>
               <p className="mt-4 flex items-center">
@@ -108,7 +137,7 @@ const PlacePage: React.FC = () => {
               <Rating
                 averageRating={averageRating}
                 totalReviews={place.reviews.length}
-                onClick={() => setIsModalOpen(true)}
+                onClick={handleReviewsClick}
               />
             </div>
           </motion.div>
@@ -138,15 +167,25 @@ const PlacePage: React.FC = () => {
           <PromotionsList placeId={place.id} />
         </div>
         <ReviewsModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          reviews={place.reviews}
+          isOpen={isReviewsModalOpen}
+          onClose={() => setIsReviewsModalOpen(false)}
+          reviews={place.reviews.map((review) => ({
+            ...review,
+            placeId: review.placeId ?? 0,
+          }))}
+          placeId={Number(place.id)}
         />
         <Modal
           isOpen={showAlert}
           onClose={() => setShowAlert(false)}
           title="Atención"
-          message="Debes iniciar sesión o registrarte para dar like."
+        >
+          <p>Debes registrarte o iniciar sesión para poder hacer reservas.</p>
+        </Modal>
+        <ReservationModal
+          isOpen={isReservationModalOpen}
+          onClose={() => setIsReservationModalOpen(false)}
+          placeId={place.id}
         />
       </div>
     </div>

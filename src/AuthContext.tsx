@@ -6,9 +6,17 @@ import React, {
   useEffect,
 } from "react";
 
+interface User {
+  email: string;
+  name: string;
+  role: string;
+}
+
 interface AuthContextType {
   token: string | null;
+  user: User | null;
   setToken: (token: string | null) => void;
+  setUser: (user: User | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -16,9 +24,23 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [token, setToken] = useState<string | null>(() => {
-    return localStorage.getItem("authToken");
-  });
+  const [token, setToken] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("authToken");
+    const storedUser = localStorage.getItem("authUser");
+
+    if (storedToken) setToken(storedToken);
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Error al analizar el usuario almacenado:", error);
+        setUser(null);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (token) {
@@ -28,8 +50,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, [token]);
 
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("authUser", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("authUser");
+    }
+  }, [user]);
+
   return (
-    <AuthContext.Provider value={{ token, setToken }}>
+    <AuthContext.Provider value={{ token, user, setToken, setUser }}>
       {children}
     </AuthContext.Provider>
   );
