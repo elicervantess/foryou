@@ -62,6 +62,14 @@ export interface NewReviewDto {
   placeId: number;
 }
 
+export interface UserResponse {
+  id: number;
+  fullName: string;
+  email: string;
+  role: string;
+  profileImage: string;
+}
+
 // Función para iniciar sesión
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
   try {
@@ -248,3 +256,49 @@ export async function createReview(newReview: NewReviewDto, token: string): Prom
     throw error;
   }
 }
+
+export const getCurrentUser = async (token: string): Promise<UserResponse> => {
+  try {
+    const response = await axios.get<UserResponse>(`${API_URL}/users/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Error al obtener la información del usuario:", error);
+    throw error;
+  }
+};
+
+export const updateUser = async (token: string, userData: Partial<UserResponse>): Promise<UserResponse> => {
+  try {
+    const response = await axios.put<UserResponse>(`${API_URL}/users/edit/me`, userData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Error al actualizar la información del usuario:", error);
+    throw error;
+  }
+};
+
+export const updateProfilePhoto = async (id: number, profilePhoto: File, token: string): Promise<UserResponse> => {
+  const formData = new FormData();
+  formData.append('profilePhoto', profilePhoto);
+
+  try {
+    const response = await axios.put<UserResponse>(`${API_URL}/users/${id}/profile-photo`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Error al actualizar la foto de perfil:", error);
+    throw error;
+  }
+};

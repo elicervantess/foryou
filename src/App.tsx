@@ -6,7 +6,7 @@ import RegisterPage from "./pages/RegisterPage";
 import HomePage from "./pages/HomePage";
 import NavBar from "./components/NavBar";
 import PlacePage from "./pages/PlacePage";
-import UserData from "./pages/UserData";
+import UserProfile from "./pages/UserProfile";
 import { AuthProvider } from "./AuthContext";
 
 const App: React.FC = () => {
@@ -24,7 +24,7 @@ const App: React.FC = () => {
             <Route path="/home" element={<HomePage />} />
             <Route path="/place/:id" element={<PlacePage />} />
             <Route path="/" element={<HomePage />} />
-            <Route path="/userdata" element={<UserData />} />
+            <Route path="/profile" element={<UserProfile />} />
           </Routes>
         </Router>
       </LoadScript>
