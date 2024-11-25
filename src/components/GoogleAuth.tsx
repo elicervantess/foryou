@@ -82,14 +82,14 @@ const GoogleAuth: React.FC = () => {
               <button
                 onClick={renderProps.onClick}
                 disabled={renderProps.disabled}
-                className="flex items-center justify-center w-full bg-white border border-gray-300 rounded p-2 mt-4 transition-transform transform hover:scale-105"
+                className="flex items-center justify-center w-full bg-white border border-gray-300 rounded-xl p-2 mt-4 transition-transform transform hover:scale-105 shadow-md"
               >
                 <img
                   src="https://developers.google.com/identity/images/g-logo.png"
                   alt="Google logo"
                   className="w-5 h-5 mr-2"
                 />
-                <span className="text-gray-700">Sign in with Google</span>
+                <span className="text-gray-700">Iniciar sesión con Google</span>
               </button>
             )}
           />
@@ -106,9 +106,9 @@ const GoogleAuth: React.FC = () => {
           <h3 className="text-center text-gray-800 mt-2">{user.name}</h3>
           <button
             onClick={handleLogout}
-            className="w-full bg-red-600 text-white p-2 rounded mt-4 transition-transform transform hover:scale-105 hover:bg-red-700"
+            className="w-full bg-red-600 text-white p-2 rounded-xl mt-4 transition-transform transform hover:scale-105 hover:bg-red-700 shadow-md"
           >
-            Logout
+            Cerrar sesión
           </button>
         </div>
       )}
