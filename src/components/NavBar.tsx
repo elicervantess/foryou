@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiHome, FiLogIn, FiUserPlus, FiMenu } from "react-icons/fi";
+import {
+  FiHome,
+  FiLogIn,
+  FiUserPlus,
+  FiMenu,
+  FiCalendar,
+} from "react-icons/fi";
 import logoIsotipo from "../assets/logo_isotipo.png";
 import { useAuth } from "../AuthContext";
 import { logout, getCurrentUser, UserResponse } from "../api";
@@ -48,6 +54,7 @@ const Navbar: React.FC = () => {
     { to: "/home", icon: <FiHome />, text: "Inicio" },
     ...(token
       ? [
+          { to: "/reservations", icon: <FiCalendar />, text: "Mis reservas" },
           {
             to: "#",
             icon: <FiMenu />,
@@ -105,11 +112,11 @@ const Navbar: React.FC = () => {
                         >
                           Mi perfil
                         </li>
-                        <li className="px-4 py-2 hover:bg-[#f0f4f8] cursor-pointer transition-colors duration-200">
-                          Mis reservas
-                        </li>
                         {user.role === "OWNER" && (
-                          <li className="px-4 py-2 hover:bg-[#f0f4f8] cursor-pointer transition-colors duration-200">
+                          <li
+                            className="px-4 py-2 hover:bg-[#f0f4f8] cursor-pointer transition-colors duration-200"
+                            onClick={() => navigate("/create")}
+                          >
                             Mis lugares
                           </li>
                         )}

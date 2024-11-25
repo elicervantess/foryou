@@ -7,6 +7,9 @@ import HomePage from "./pages/HomePage";
 import NavBar from "./components/NavBar";
 import PlacePage from "./pages/PlacePage";
 import UserProfile from "./pages/UserProfile";
+import UserData from "./pages/UserData";
+import ReservationPage from "./pages/ReservationPage";
+import CreatePage from "./pages/CreatePage";
 import { AuthProvider } from "./AuthContext";
 
 const App: React.FC = () => {
@@ -25,6 +28,9 @@ const App: React.FC = () => {
             <Route path="/place/:id" element={<PlacePage />} />
             <Route path="/" element={<HomePage />} />
             <Route path="/profile" element={<UserProfile />} />
+            <Route path="/userdata" element={<UserData />} />
+            <Route path="/reservations" element={<ReservationPage />} />
+            <Route path="/create" element={<CreatePage />} />
           </Routes>
         </Router>
       </LoadScript>

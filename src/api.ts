@@ -38,6 +38,7 @@ export interface ApiPlaceResponse {
   likes: number | null;
   category: string;
   openingHours: string;
+  closingHours: string;
   coordinate: {
     latitude: number;
     longitude: number;
@@ -302,3 +303,108 @@ export const updateProfilePhoto = async (id: number, profilePhoto: File, token: 
     throw error;
   }
 };
+
+export interface UserReservation {
+  placeId: number;
+  placeName: string;
+  date: string;
+  numberOfPeople: number;
+  imageUrl: string;
+}
+
+export const getUserReservations = async (token: string): Promise<UserReservation[]> => {
+  try {
+    const response = await axios.get<UserReservation[]>(`${API_URL}/reservations/user`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Error al obtener las reservas del usuario:", error);
+    throw error;
+  }
+};
+
+export const createPlace = async (placeData: FormData, token: string): Promise<ApiPlaceResponse> => {
+  try {
+    const response = await axios.post<ApiPlaceResponse>(`${API_URL}/places`, placeData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Error al crear el lugar:", error);
+    throw error;
+  }
+};
+
+export const updatePlace = async (id: number, placeData: FormData, token: string): Promise<ApiPlaceResponse> => {
+  try {
+    const response = await axios.put<ApiPlaceResponse>(`${API_URL}/places/${id}`, placeData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Error al actualizar el lugar:", error);
+    throw error;
+  }
+};
+
+export const deletePlace = async (id: number, token: string): Promise<void> => {
+  try {
+    await axios.delete(`${API_URL}/places/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (error: any) {
+    console.error("Error al eliminar el lugar:", error);
+    throw error;
+  }
+};
+
+export const getMyPlaces = async (token: string): Promise<ApiPlaceResponse[]> => {
+  try {
+    const response = await axios.get<ApiPlaceResponse[]>(`${API_URL}/places/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Error al obtener mis lugares:", error);
+    throw error;
+  }
+};
+
+export interface ReservationSummaryDto {
+  reservationId: number;
+  date: string;
+  numberOfPeople: number;
+  placeId: number;
+  placeName: string;
+  userName: string;
+  userEmail: string;
+}
+
+export const getReservationsByOwner = async (token: string): Promise<ReservationSummaryDto[]> => {
+  try {
+    const response = await axios.get<ReservationSummaryDto[]>(`${API_URL}/myplaces`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error: any) {
+    console.error("Error al obtener las reservas del propietario:", error);
+    throw error;
+  }
+};
+
+

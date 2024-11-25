@@ -9,7 +9,6 @@ import { useAuth } from "../AuthContext";
 import Rating from "../components/Rating";
 import ReviewsModal from "../components/ReviewsModal";
 import LikeButton from "../components/LikeButton";
-import Modal from "../components/Modal";
 import PlaceHeader from "../components/PlaceHeader";
 import { motion } from "framer-motion";
 import ReservationModal from "../components/ReservationModal";
@@ -24,6 +23,8 @@ const PlacePage: React.FC = () => {
   const { token } = useAuth();
   const [isReservationModalOpen, setIsReservationModalOpen] =
     useState<boolean>(false);
+
+  const isAuthenticated = !!token;
 
   useEffect(() => {
     const fetchPlace = async () => {
@@ -70,7 +71,7 @@ const PlacePage: React.FC = () => {
   };
 
   const handleReservationClick = () => {
-    if (!token) {
+    if (!isAuthenticated) {
       setShowAlert(true);
     } else {
       setIsReservationModalOpen(true);
@@ -107,8 +108,8 @@ const PlacePage: React.FC = () => {
       : 0;
 
   return (
-    <div className="min-h-screen">
-      <div className="p-8 max-w-6xl mx-auto mt-10 font-sans">
+    <div className="min-h-screen pt-4">
+      <div className="pt-12 p-8 max-w-6xl mx-auto mt-10 font-sans">
         <PlaceHeader name={place.name} imageUrl={place.imageUrl ?? ""} />
         <div className="flex flex-col md:flex-row items-start mt-8">
           <motion.div
@@ -131,8 +132,12 @@ const PlacePage: React.FC = () => {
                 Reserva
               </button>
               <p className="mt-4 flex items-center">
-                <LikeButton hasLiked={hasLiked} onToggle={handleLikeToggle} />A{" "}
-                {likes} personas les gusta este lugar
+                <LikeButton
+                  hasLiked={hasLiked}
+                  onToggle={handleLikeToggle}
+                  isAuthenticated={isAuthenticated}
+                />
+                A {likes} personas les gusta este lugar
               </p>
               <Rating
                 averageRating={averageRating}
@@ -175,13 +180,29 @@ const PlacePage: React.FC = () => {
           }))}
           placeId={Number(place.id)}
         />
-        <Modal
-          isOpen={showAlert}
-          onClose={() => setShowAlert(false)}
-          title="Atención"
-        >
-          <p>Debes registrarte o iniciar sesión para poder hacer reservas.</p>
-        </Modal>
+        {showAlert && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+              className="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full transform transition-all duration-300 ease-out"
+            >
+              <h2 className="text-xl font-bold mb-4 text-center">Atención</h2>
+              <p className="mb-6 text-center">
+                Debes registrarte o iniciar sesión para poder crear una reserva.
+              </p>
+              <div className="flex justify-center">
+                <button
+                  onClick={() => setShowAlert(false)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
         <ReservationModal
           isOpen={isReservationModalOpen}
           onClose={() => setIsReservationModalOpen(false)}

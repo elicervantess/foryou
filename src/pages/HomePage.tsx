@@ -3,7 +3,6 @@ import { getAllPlacesForMap, ApiPlaceResponse } from "../api";
 import MapComponent from "../components/MapComponent";
 import PlaceCard from "../components/PlaceCard";
 import SearchBar from "../components/SearchBar";
-import Pagination from "../components/Pagination";
 import AnimatedBackground from "../components/AnimatedBackground";
 
 const HomePage: React.FC = () => {
@@ -12,16 +11,20 @@ const HomePage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [highlightedPlace, setHighlightedPlace] =
     useState<ApiPlaceResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 9;
 
   useEffect(() => {
     const fetchPlaces = async () => {
       try {
+        setIsLoading(true);
         const data = await getAllPlacesForMap();
         setPlaces(data);
         setFilteredPlaces(data);
       } catch (error) {
         console.error("Error al obtener lugares:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchPlaces();
@@ -41,24 +44,34 @@ const HomePage: React.FC = () => {
     setCurrentPage(0);
   };
 
-  const handleNextPage = () => {
+  const loadMorePlaces = () => {
     if ((currentPage + 1) * itemsPerPage < filteredPlaces.length) {
-      setCurrentPage(currentPage + 1);
+      setIsLoading(true);
+      setTimeout(() => {
+        setCurrentPage(currentPage + 1);
+        setIsLoading(false);
+      }, 1000); // Simula un retraso de carga
     }
   };
 
-  const handlePrevPage = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight - 1
+      ) {
+        loadMorePlaces();
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [currentPage, filteredPlaces]);
 
   const paginatedPlaces = filteredPlaces.slice(
-    currentPage * itemsPerPage,
+    0,
     (currentPage + 1) * itemsPerPage
   );
-
-  const totalPages = Math.ceil(filteredPlaces.length / itemsPerPage);
 
   useEffect(() => {
     // Forzar redimensionamiento del mapa al cambiar de página
@@ -105,13 +118,10 @@ const HomePage: React.FC = () => {
               );
             })}
           </div>
-          {totalPages > 1 && (
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onNext={handleNextPage}
-              onPrev={handlePrevPage}
-            />
+          {isLoading && (
+            <div className="flex justify-center mt-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
           )}
         </div>
         <div

@@ -143,11 +143,13 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
 
     const [hours, minutes] = data.time.split(":");
     const date = new Date(data.date);
-    date.setHours(parseInt(hours), parseInt(minutes));
+    date.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+
+    const utcDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
 
     const reservationRequest: ReservationRequest = {
       placeId: Number(placeId),
-      date: date.toISOString(),
+      date: utcDate.toISOString(),
       numberOfPeople: Number(data.numberOfPeople),
     };
 
@@ -231,6 +233,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
                         }
                         todayButton="Hoy"
                         popperClassName="react-datepicker-popper"
+                        minDate={new Date()}
                       />
                       <FaCalendarAlt className="absolute left-2 top-9 text-gray-500" />
                     </FormField>

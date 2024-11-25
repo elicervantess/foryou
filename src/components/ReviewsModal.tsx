@@ -29,11 +29,12 @@ const ReviewsModal: React.FC<ReviewsModalProps> = ({
   const [newRating, setNewRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [currentReviews, setCurrentReviews] = useState<Review[]>(reviews);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const handleCreateReview = async () => {
     const token = localStorage.getItem("authToken");
     if (!token) {
-      console.error("Usuario no autenticado");
+      setShowAuthModal(true);
       return;
     }
 
@@ -56,9 +57,11 @@ const ReviewsModal: React.FC<ReviewsModalProps> = ({
 
   const averageRating =
     currentReviews.length > 0
-      ? currentReviews.reduce((acc, review) => acc + review.rating, 0) /
-        currentReviews.length
-      : 0;
+      ? (
+          currentReviews.reduce((acc, review) => acc + review.rating, 0) /
+          currentReviews.length
+        ).toFixed(2)
+      : "0.00";
 
   const ratingDistribution = [5, 4, 3, 2, 1].map((rating) => ({
     rating,
@@ -89,7 +92,7 @@ const ReviewsModal: React.FC<ReviewsModalProps> = ({
             </h3>
             <div className="flex items-center justify-center mb-4">
               <span className="text-4xl font-bold text-gray-800">
-                {averageRating.toFixed(1)}
+                {averageRating}
               </span>
               <FaStar className="text-yellow-500 ml-2 text-3xl" />
             </div>
@@ -161,6 +164,30 @@ const ReviewsModal: React.FC<ReviewsModalProps> = ({
           </div>
         </div>
       </motion.div>
+
+      {showAuthModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full transform transition-all duration-300 ease-out"
+          >
+            <h2 className="text-xl font-bold mb-4 text-center">Atención</h2>
+            <p className="mb-6 text-center">
+              Debes iniciar sesión o registrarte para poder crear una reseña.
+            </p>
+            <div className="flex justify-center">
+              <button
+                onClick={() => setShowAuthModal(false)}
+                className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition"
+              >
+                Cerrar
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };
