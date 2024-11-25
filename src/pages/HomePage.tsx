@@ -145,6 +145,9 @@ const HomePage: React.FC = () => {
             }
             containerStyle={{ width: "100%", height: "100%" }}
             mapId="44ee8e50b046cd6f"
+            onMapClick={(event) => {
+              console.log("Mapa clicado en:", event);
+            }}
           />
         </div>
       </div>

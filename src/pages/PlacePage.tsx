@@ -162,8 +162,13 @@ const PlacePage: React.FC = () => {
                 },
               ]}
               center={place.coordinate}
-              containerStyle={{ width: "100%", height: "300px" }}
-              mapId="44ee8e50b046cd6f"
+              containerStyle={{ width: "100%", height: "100%" }}
+              mapId="tu-map-id"
+              onMapClick={(lat, lng) => {
+                console.log(
+                  `Mapa clicado en latitud: ${lat}, longitud: ${lng}`
+                );
+              }}
             />
           </motion.div>
         </div>
