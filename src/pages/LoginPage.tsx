@@ -12,7 +12,7 @@ import {
 } from "react-icons/fi";
 import { login } from "../api";
 import GoogleAuth from "../components/GoogleAuth";
-import Logo from "../assets/Logo.png";
+import Logo from "/assets/Logo.png";
 import FlipWords from "../components/FlipWords";
 import AnimatedBackground from "../components/AnimatedBackground";
 

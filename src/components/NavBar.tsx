@@ -8,7 +8,7 @@ import {
   FiMenu,
   FiCalendar,
 } from "react-icons/fi";
-import logoIsotipo from "../assets/logo_isotipo.png";
+import logoIsotipo from "/assets/logo_isotipo.png";
 import { useAuth } from "../AuthContext";
 import { logout, getCurrentUser, UserResponse } from "../api";
 

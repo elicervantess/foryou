@@ -23,16 +23,16 @@ interface MapComponentProps {
     latitude: number;
     longitude: number;
   };
-  onMapClick: (lat: number, lng: number) => void; // Añadir esta prop
+  onMapClick: (lat: number, lng: number) => void;
 }
 
-const MapComponent: React.FC<MapComponentProps> = ({
+const MapComponent: React.FC<MapComponentProps & { className?: string }> = ({
   places,
   center,
   containerStyle,
   mapId,
-  userLocation,
-  onMapClick, // Recibir la prop
+  onMapClick,
+  className,
 }) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
@@ -45,7 +45,6 @@ const MapComponent: React.FC<MapComponentProps> = ({
         mapId: mapId,
       });
 
-      // Añadir evento de clic
       mapInstance.current.addListener(
         "click",
         (e: google.maps.MapMouseEvent) => {
@@ -75,40 +74,19 @@ const MapComponent: React.FC<MapComponentProps> = ({
         });
       });
 
-      if (userLocation) {
-        const directionsService = new google.maps.DirectionsService();
-        const directionsRenderer = new google.maps.DirectionsRenderer();
-        directionsRenderer.setMap(mapInstance.current);
-
-        directionsService.route(
-          {
-            origin: new google.maps.LatLng(
-              userLocation.latitude,
-              userLocation.longitude
-            ),
-            destination: new google.maps.LatLng(
-              center.latitude,
-              center.longitude
-            ),
-            travelMode: google.maps.TravelMode.DRIVING,
-          },
-          (result, status) => {
-            if (status === google.maps.DirectionsStatus.OK) {
-              directionsRenderer.setDirections(result);
-            } else {
-              console.error("Error al obtener las direcciones:", status);
-            }
-          }
-        );
-      }
-
       return () => {
         markers.forEach((marker) => marker.setMap(null));
       };
     }
-  }, [places, center, userLocation]);
+  }, [places, center]);
 
-  return <div ref={mapRef} style={containerStyle} />;
+  return (
+    <div
+      ref={mapRef}
+      style={containerStyle}
+      className={`border-4 border-teal-400 rounded-xl shadow-lg ${className}`}
+    />
+  );
 };
 
 export default memo(MapComponent);
