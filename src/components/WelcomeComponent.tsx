@@ -16,5 +16,5 @@ const WelcomeComponent: React.FC<WelcomeComponentProps> = ({ ownerName }) => {
     </div>
   );
 };
-
+//cambio
 export default WelcomeComponent;
