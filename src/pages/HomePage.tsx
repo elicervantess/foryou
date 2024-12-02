@@ -4,6 +4,8 @@ import MapComponent from "../components/MapComponent";
 import PlaceCard from "../components/PlaceCard";
 import SearchBar from "../components/SearchBar";
 import AnimatedBackground from "../components/AnimatedBackground";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 const HomePage: React.FC = () => {
   const [places, setPlaces] = useState<ApiPlaceResponse[]>([]);
@@ -99,25 +101,38 @@ const HomePage: React.FC = () => {
             msOverflowStyle: "none",
           }}
         >
-          <div className="grid grid-cols-3 gap-y-0 gap-x-4">
-            {paginatedPlaces.map((place) => {
-              const averageRating =
-                place.reviews.length > 0
-                  ? place.reviews.reduce(
-                      (sum, review) => sum + review.rating,
-                      0
-                    ) / place.reviews.length
-                  : 0;
+          {paginatedPlaces.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full">
+              <FontAwesomeIcon
+                icon={faSearch}
+                size="4x"
+                className="text-gray-400 mb-4"
+              />
+              <p className="text-xl font-semibold text-gray-700">
+                Place no encontrado
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-3 gap-y-0 gap-x-4">
+              {paginatedPlaces.map((place) => {
+                const averageRating =
+                  place.reviews.length > 0
+                    ? place.reviews.reduce(
+                        (sum, review) => sum + review.rating,
+                        0
+                      ) / place.reviews.length
+                    : 0;
 
-              return (
-                <PlaceCard
-                  key={place.id}
-                  place={{ ...place, rating: averageRating }}
-                  onMouseEnter={() => setHighlightedPlace(place)}
-                />
-              );
-            })}
-          </div>
+                return (
+                  <PlaceCard
+                    key={place.id}
+                    place={{ ...place, rating: averageRating }}
+                    onMouseEnter={() => setHighlightedPlace(place)}
+                  />
+                );
+              })}
+            </div>
+          )}
           {isLoading && (
             <div className="flex justify-center mt-4">
               <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>

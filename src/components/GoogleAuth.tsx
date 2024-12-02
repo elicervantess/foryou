@@ -6,27 +6,12 @@ import { useNavigate } from "react-router-dom";
 const clientID =
   "673871409745-bh4iec9sd4f6rl5fa8vshguko8t59bph.apps.googleusercontent.com";
 
-// Define los tipos si no están disponibles
-interface GoogleLoginResponse {
-  tokenId: string;
-  profileObj: {
-    name: string;
-    imageUrl: string;
-  };
-}
-
-interface GoogleLoginResponseOffline {
-  // Define las propiedades necesarias para este tipo si las usas
-}
-
 const GoogleAuth: React.FC = () => {
   const [user, setUser] = useState<any>({});
   const [loggedIn, setLoggedIn] = useState(false);
   const navigate = useNavigate();
 
-  const onSuccess = async (
-    response: GoogleLoginResponse | GoogleLoginResponseOffline
-  ) => {
+  const onSuccess = async (response: any) => {
     if ("tokenId" in response) {
       const idToken = response.tokenId;
       console.log("ID Token:", idToken);
@@ -81,22 +66,7 @@ const GoogleAuth: React.FC = () => {
   return (
     <GoogleOAuthProvider clientId={clientID}>
       <div className="center">
-        {!loggedIn && (
-          <div className="btn">
-            <GoogleLogin onSuccess={onSuccess} onError={onFailure} />
-            <button
-              onClick={() => {}}
-              className="flex items-center justify-center w-full bg-white border border-gray-300 rounded-xl p-2 mt-4 transition-transform transform hover:scale-105 shadow-md"
-            >
-              <img
-                src="https://developers.google.com/identity/images/g-logo.png"
-                alt="Google logo"
-                className="w-5 h-5 mr-2"
-              />
-              <span className="text-gray-700">Iniciar sesión con Google</span>
-            </button>
-          </div>
-        )}
+        {!loggedIn && <GoogleLogin onSuccess={onSuccess} onError={onFailure} />}
 
         {loggedIn && (
           <div className="profile mt-4">

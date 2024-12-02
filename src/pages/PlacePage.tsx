@@ -23,6 +23,14 @@ const PlacePage: React.FC = () => {
   const { token } = useAuth();
   const [isReservationModalOpen, setIsReservationModalOpen] =
     useState<boolean>(false);
+  const [showRoute, setShowRoute] = useState<boolean>(false);
+  const [userLocation, setUserLocation] = useState<
+    | {
+        latitude: number;
+        longitude: number;
+      }
+    | undefined
+  >(undefined);
 
   const isAuthenticated = !!token;
 
@@ -45,7 +53,23 @@ const PlacePage: React.FC = () => {
         console.error("Error al obtener los detalles del lugar:", error);
       }
     };
+
+    const fetchUserLocation = () => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setUserLocation({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error("Error al obtener la ubicación del usuario:", error);
+        }
+      );
+    };
+
     fetchPlace();
+    fetchUserLocation();
   }, [id, token]);
 
   const handleLikeToggle = async () => {
@@ -93,6 +117,20 @@ const PlacePage: React.FC = () => {
     }
   }, [isReviewsModalOpen]);
 
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator
+        .share({
+          title: place?.name ?? "",
+          text: `Mira este lugar: ${place?.name ?? ""}`,
+          url: window.location.href,
+        })
+        .catch((error) => console.error("Error al compartir:", error));
+    } else {
+      console.log("La API de compartir no está disponible en este navegador.");
+    }
+  };
+
   if (!place) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -131,6 +169,18 @@ const PlacePage: React.FC = () => {
               >
                 Reserva
               </button>
+              <button
+                onClick={handleShare}
+                className="bg-blue-500 text-white px-6 py-3 rounded-full shadow-md hover:bg-blue-600 transition ml-4"
+              >
+                Compartir
+              </button>
+              <button
+                onClick={() => setShowRoute(true)}
+                className="bg-green-600 text-white px-6 py-3 rounded-full shadow-md hover:bg-green-700 transition ml-4"
+              >
+                Mostrar Ruta
+              </button>
               <p className="mt-4 flex items-center">
                 <LikeButton
                   hasLiked={hasLiked}
@@ -164,11 +214,21 @@ const PlacePage: React.FC = () => {
               center={place.coordinate}
               containerStyle={{ width: "100%", height: "400px" }}
               mapId="44ee8e50b046cd6f"
+              userLocation={
+                userLocation
+                  ? {
+                      latitude: userLocation.latitude,
+                      longitude: userLocation.longitude,
+                    }
+                  : undefined
+              }
               onMapClick={(lat, lng) => {
                 console.log(
                   `Mapa clicado en latitud: ${lat}, longitud: ${lng}`
                 );
               }}
+              canClick={true}
+              showRoute={showRoute}
               className="border-4 border-blue-500 rounded-lg shadow-lg"
             />
           </motion.div>

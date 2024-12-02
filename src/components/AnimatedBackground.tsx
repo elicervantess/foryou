@@ -71,12 +71,13 @@ const AnimatedBackground: React.FC = () => {
       constructor(width: number, height: number) {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 0.5;
-        this.vy = (Math.random() - 0.5) * 0.5;
+        this.vx = (Math.random() - 0.5) * 0.000000000000000001;
+        this.vy = (Math.random() - 0.5) * 0.000000000000000001;
         this.icon = icons[Math.floor(Math.random() * icons.length)];
         this.connections = [];
         this.wobble = Math.random() * Math.PI * 2;
-        this.wobbleSpeed = Math.random() * 0.02 + 0.01;
+        this.wobbleSpeed =
+          Math.random() * 0.000000000000000001 + 0.0000000000000000005;
         this.size = Math.random() * 10 + 25;
       }
 

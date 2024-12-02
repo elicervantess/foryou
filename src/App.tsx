@@ -16,7 +16,7 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <LoadScript
-        googleMapsApiKey="AIzaSyDTW5hhttoJGo7usEohzDPfub_KR6KFTRU"
+        googleMapsApiKey="AIzaSyCrjMZkBe5S0LAEHByo8hthg7CJXQFl-wM"
         libraries={["places", "marker"]}
       >
         <Router>

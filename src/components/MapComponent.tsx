@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef } from "react";
+import React, { memo, useEffect, useRef, useState } from "react";
 
 interface MapComponentProps {
   places: Array<{
@@ -24,6 +24,8 @@ interface MapComponentProps {
     longitude: number;
   };
   onMapClick: (lat: number, lng: number) => void;
+  canClick?: boolean;
+  showRoute?: boolean;
 }
 
 const MapComponent: React.FC<MapComponentProps & { className?: string }> = ({
@@ -33,9 +35,15 @@ const MapComponent: React.FC<MapComponentProps & { className?: string }> = ({
   mapId,
   onMapClick,
   className,
+  canClick,
+  showRoute,
+  userLocation,
 }) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapInstance = useRef<google.maps.Map | null>(null);
+  const [clickMarker, setClickMarker] = useState<google.maps.Marker | null>(
+    null
+  );
 
   useEffect(() => {
     if (mapRef.current && !mapInstance.current) {
@@ -45,16 +53,30 @@ const MapComponent: React.FC<MapComponentProps & { className?: string }> = ({
         mapId: mapId,
       });
 
-      mapInstance.current.addListener(
-        "click",
-        (e: google.maps.MapMouseEvent) => {
-          if (e.latLng) {
-            onMapClick(e.latLng.lat(), e.latLng.lng());
+      if (canClick) {
+        mapInstance.current.addListener(
+          "click",
+          (e: google.maps.MapMouseEvent) => {
+            if (e.latLng) {
+              onMapClick(e.latLng.lat(), e.latLng.lng());
+
+              // Elimina el marcador anterior si existe
+              if (clickMarker) {
+                clickMarker.setMap(null);
+              }
+
+              // Crea un nuevo marcador
+              const newMarker = new google.maps.Marker({
+                position: e.latLng,
+                map: mapInstance.current,
+              });
+              setClickMarker(newMarker);
+            }
           }
-        }
-      );
+        );
+      }
     }
-  }, [mapId, center, onMapClick]);
+  }, [mapId, center, onMapClick, clickMarker, canClick]);
 
   useEffect(() => {
     if (mapInstance.current) {
@@ -79,6 +101,33 @@ const MapComponent: React.FC<MapComponentProps & { className?: string }> = ({
       };
     }
   }, [places, center]);
+
+  useEffect(() => {
+    if (mapInstance.current && showRoute && userLocation) {
+      const directionsService = new google.maps.DirectionsService();
+      const directionsRenderer = new google.maps.DirectionsRenderer();
+      directionsRenderer.setMap(mapInstance.current);
+
+      const request = {
+        origin: new google.maps.LatLng(
+          userLocation.latitude,
+          userLocation.longitude
+        ),
+        destination: new google.maps.LatLng(center.latitude, center.longitude),
+        travelMode: google.maps.TravelMode.DRIVING,
+      };
+
+      directionsService.route(request, (result, status) => {
+        if (status === google.maps.DirectionsStatus.OK) {
+          directionsRenderer.setDirections(result);
+        } else {
+          console.error("Error al obtener la ruta:", status);
+        }
+      });
+    }
+  }, [showRoute, userLocation, center]);
+
+  console.log("User Location:", userLocation);
 
   return (
     <div

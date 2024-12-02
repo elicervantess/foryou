@@ -35,6 +35,7 @@ const ReservaModal: React.FC<ReservaModalProps> = ({
     | undefined
   >(undefined);
   const navigate = useNavigate();
+  const [showRoute, setShowRoute] = useState(false);
 
   useEffect(() => {
     const fetchCoordinates = async () => {
@@ -78,106 +79,103 @@ const ReservaModal: React.FC<ReservaModalProps> = ({
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
-        className="bg-white rounded-2xl p-8 w-11/12 max-w-lg relative shadow-lg"
+        className="bg-white rounded-3xl p-6 w-11/12 max-w-4xl relative shadow-2xl flex flex-col md:flex-row border border-gray-300"
       >
         <motion.button
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3 }}
-          className="text-red-500 absolute top-4 right-4 z-10 bg-white p-2 rounded-full"
+          className="text-red-500 absolute top-2 right-2 z-20 bg-white p-2 rounded-full shadow-md hover:bg-red-100 transition"
           onClick={onClose}
         >
-          Cerrar
+          ✖
         </motion.button>
-        <motion.img
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          src={imageUrl}
-          alt={placeName}
-          className="w-full h-40 object-cover rounded-lg mb-4"
-        />
-        <motion.h2
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-xl font-bold mb-2"
-        >
-          {placeName}
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-gray-600 mb-1"
-        >
-          Fecha: {formattedDate}
-        </motion.p>
-        <motion.p
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-gray-600 mb-1"
-        >
-          Hora: {formattedTime}
-        </motion.p>
-        <motion.p
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-gray-600 mb-4"
-        >
-          Personas: {numberOfPeople}
-        </motion.p>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-4"
-        >
-          <MapComponent
-            places={[
-              {
-                id: placeId.toString(),
-                name: placeName,
-                coordinate: coordinates,
-              },
-            ]}
-            center={coordinates}
-            containerStyle={{ width: "100%", height: "250px" }}
-            mapId="your-map-id"
-            userLocation={userLocation ?? undefined}
-            onMapClick={() => {
-              console.log("Mapa clicado");
-            }}
+        <div className="md:w-1/2 pr-4 mb-4 md:mb-0">
+          <motion.img
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            src={imageUrl}
+            alt={placeName}
+            className="w-full h-64 object-cover rounded-xl mb-4 shadow-md"
           />
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="flex justify-between"
-        >
-          <button
-            className="bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition"
-            onClick={() => navigate(`/place/${placeId}`)}
+          <motion.h2
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-3xl font-bold mb-4 text-gray-800"
           >
-            Ver más detalles
-          </button>
-          <button
-            className="bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition"
-            onClick={() => {
-              if (userLocation) {
-                window.open(
-                  `https://www.google.com/maps/dir/?api=1&origin=${userLocation.latitude},${userLocation.longitude}&destination=${coordinates.latitude},${coordinates.longitude}`,
-                  "_blank"
-                );
-              }
-            }}
+            {placeName}
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-lg font-semibold text-gray-800 mb-2"
           >
-            Cómo llegar
-          </button>
-        </motion.div>
+            📅 Fecha: {formattedDate}
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-lg font-semibold text-gray-800 mb-2"
+          >
+            ⏰ Hora: {formattedTime}
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-lg font-semibold text-gray-800 mb-4"
+          >
+            👥 Personas: {numberOfPeople}
+          </motion.p>
+        </div>
+        <div className="md:w-1/2 pl-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-4"
+          >
+            <MapComponent
+              places={[
+                {
+                  id: placeId.toString(),
+                  name: placeName,
+                  coordinate: coordinates,
+                },
+              ]}
+              center={coordinates}
+              containerStyle={{
+                width: "100%",
+                height: "350px",
+              }}
+              mapId="your-map-id"
+              userLocation={userLocation ?? undefined}
+              onMapClick={() => {
+                console.log("Mapa clicado");
+              }}
+              canClick={true}
+              showRoute={showRoute}
+            />
+          </motion.div>
+          <div className="flex justify-between mt-4">
+            <button
+              className="bg-blue-600 text-white px-6 py-3 rounded-full shadow-md hover:bg-blue-700 transition"
+              onClick={() => navigate(`/place/${placeId}`)}
+            >
+              Ver más detalles del Lugar
+            </button>
+            <button
+              className="bg-green-600 text-white px-6 py-3 rounded-full shadow-md hover:bg-green-700 transition"
+              onClick={() => setShowRoute(true)}
+            >
+              Mostrar Ruta
+            </button>
+          </div>
+        </div>
       </motion.div>
     </div>
   );

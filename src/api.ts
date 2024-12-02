@@ -71,7 +71,6 @@ export interface UserResponse {
   profileImage: string;
 }
 
-// Función para iniciar sesión
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
   try {
     const response = await axios.post<LoginResponse>(`${API_URL}/auth/login`, { email, password });
