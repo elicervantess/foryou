@@ -22,36 +22,16 @@ const AnimatedBackground: React.FC = () => {
 
   const icons = useMemo(
     () => [
-      "🏠",
-      "🏖️",
-      "🏔️",
-      "🏙️",
-      "🚗",
-      "✈️",
-      "🚢",
-      "🚆",
-      "🏕️",
-      "🗽",
-      "🗼",
-      "🎡",
-      "⛩️",
-      "🕌",
-      "🏰",
-      "🍽️",
-      "☕",
-      "🚙",
-      "🏞️",
-      "🗺️",
-      "📍",
-      "🍔",
-      "🍕",
-      "🍣",
-      "🍦",
-      "🏨",
-      "🏛️",
-      "🌳",
-      "🚉",
-      "🚁",
+      "❤️",
+      "💖",
+      "💘",
+      "💝",
+      "💞",
+      "💕",
+      "💓",
+      "💗",
+      "💟",
+      "❣️",
     ],
     []
   );
@@ -71,14 +51,13 @@ const AnimatedBackground: React.FC = () => {
       constructor(width: number, height: number) {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 0.000000000000000001;
-        this.vy = (Math.random() - 0.5) * 0.000000000000000001;
+        this.vx = (Math.random() - 0.5) * 0.5;
+        this.vy = (Math.random() - 0.5) * 0.5;
         this.icon = icons[Math.floor(Math.random() * icons.length)];
         this.connections = [];
         this.wobble = Math.random() * Math.PI * 2;
-        this.wobbleSpeed =
-          Math.random() * 0.000000000000000001 + 0.0000000000000000005;
-        this.size = Math.random() * 10 + 25;
+        this.wobbleSpeed = Math.random() * 0.02 + 0.01;
+        this.size = Math.random() * 20 + 30;
       }
 
       update(width: number, height: number) {
@@ -109,7 +88,7 @@ const AnimatedBackground: React.FC = () => {
             location.x + location.size / 2,
             location.y - location.size / 2
           );
-          ctx.strokeStyle = "rgba(150, 150, 150, 0.2)";
+          ctx.strokeStyle = "rgba(255, 0, 0, 0.2)";
           ctx.lineWidth = 1;
           ctx.setLineDash([5, 5]);
           ctx.stroke();
@@ -165,8 +144,8 @@ const AnimatedBackground: React.FC = () => {
 
     const drawBackground = () => {
       const gradient = ctx.createLinearGradient(0, 0, width, height);
-      gradient.addColorStop(0, "#E6F3FF");
-      gradient.addColorStop(1, "#FFFFFF");
+      gradient.addColorStop(0, "#FFEBEE");
+      gradient.addColorStop(1, "#FFCDD2");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, width, height);
     };
